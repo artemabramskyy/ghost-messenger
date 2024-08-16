@@ -1,10 +1,8 @@
 import express from 'express';
 import path from 'path';
 
-// Routes
-// import {} from 'routes';
+import { messageRoute } from './routes';
 
-// Middlewares
 // import {} from 'middlewares';
 
 const PORT = 4000;
@@ -24,7 +22,7 @@ app.use(
   })
 );
 
-// app.use(`${baseUrl}/auth`, authRoute);
+app.use(`${BASE_URL}/message`, messageRoute);
 
 app.get('*', (req, res) => {
   res.sendFile(`${staticPath}/index.html`);

@@ -4,13 +4,18 @@ const MessageForm = () => {
   const URL = '/api/v1/message/send-message'
   const [message, setMessage] = useState('');
 
-  const sendMessage = async (message: string) => {
-    await fetch(URL, {
-      method: 'POST',
-      body: message
-    }).then(r => {
-      console.log(r.body);
-    });
+  const sendMessage = async (e : React.MouseEvent) => {
+    e.preventDefault();
+    console.log(message);
+    try {
+      const result = await fetch(URL, {
+        method: 'POST',
+        body: message
+      });
+      console.log("cool!")
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   return (
@@ -19,7 +24,7 @@ const MessageForm = () => {
       <input onChange={(e) => {
         setMessage(e.target.value)
       }}></input>
-      <button onClick={e => sendMessage(message)}>
+      <button onClick={e => sendMessage(e)}>
         Send Message
       </button>
     </form>
