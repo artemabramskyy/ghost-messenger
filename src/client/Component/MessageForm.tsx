@@ -4,13 +4,17 @@ const MessageForm = () => {
   const URL = '/api/v1/message/send-message'
   const [message, setMessage] = useState('');
 
-  const sendMessage = async (e : React.MouseEvent) => {
+  const sendMessage = async (e: React.MouseEvent) => {
     e.preventDefault();
     console.log(message);
     try {
       const result = await fetch(URL, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
         method: 'POST',
-        body: message
+        body: JSON.stringify({message})
       });
       console.log("cool!")
     } catch (e) {
