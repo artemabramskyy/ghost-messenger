@@ -1,0 +1,39 @@
+{
+  "name": "ghost-messanger",
+  "version": "1.0.0",
+  "description": "",
+  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "targets": {
+    "client": {
+      "source": "src/client/index.html"
+    },
+    "server": {
+      "source": "src/server/index.js",
+      "includeNodeModules": true,
+      "engines": {
+        "node": ">= 20"
+      }
+    }
+  },
+  "scripts": {
+    "dev": "parcel watch --no-source-maps --no-cache",
+    "build": "parcel build --no-source-maps --no-cache --public-url ./",
+    "prestart": "cp web/client/*.wasm dist/client/ && cp web/client/*.worker.js dist/client/",
+    "start": "node dist/server/index.js"
+  },
+  "author": "Artem Abramskyy & Arsenii Zarudniuk",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/react-dom": "^18.3.0",
+    "nodemon": "^3.1.4",
+    "parcel": "^2.12.0",
+    "typescript": "^5.5.4"
+  }
+}
