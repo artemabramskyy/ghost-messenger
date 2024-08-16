@@ -1,17 +1,17 @@
 import type { Request, Response, NextFunction } from 'express';
 
 // Services
-import { sendMessegeService } from '../services';
+import { sendMessageService } from '../services';
 
-export const sendMessege = async (
+export const sendMessage = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { messege } = req.params;
+    const { message } = req.params;
 
-    res.json(await sendMessegeService({ messege }));
+    res.json(await sendMessageService({ message }));
   } catch (error) {
     next(error);
   }

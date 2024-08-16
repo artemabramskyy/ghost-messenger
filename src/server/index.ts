@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'path';
 
-import { messegeRoute } from './routes';
+import { messageRoute } from './routes';
 
 // import {} from 'middlewares';
 
@@ -22,7 +22,7 @@ app.use(
   })
 );
 
-app.use(`${BASE_URL}/messege`, messegeRoute);
+app.use(`${BASE_URL}/message`, messageRoute);
 
 app.get('*', (req, res) => {
   res.sendFile(`${staticPath}/index.html`);
