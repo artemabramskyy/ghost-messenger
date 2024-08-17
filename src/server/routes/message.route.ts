@@ -4,6 +4,6 @@ import { sendMessage } from '../controllers';
 
 const router = express.Router();
 
-router.post('/send-message', sendMessage);
+router.post('/send', sendMessage);
 
 export default router;

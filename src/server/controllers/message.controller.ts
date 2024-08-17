@@ -1,6 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
 
-// Services
 import { sendMessageService } from '../services';
 
 export const sendMessage = async (
@@ -9,9 +8,9 @@ export const sendMessage = async (
   next: NextFunction
 ) => {
   try {
-    const { message } = req.params;
+    const { message, chatMeta } = req.body;
 
-    res.json(await sendMessageService({ message }));
+    res.json(sendMessageService({ message }));
   } catch (error) {
     next(error);
   }
