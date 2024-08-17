@@ -1,9 +1,9 @@
 import express from 'express';
 
-import { createChat } from '../controllers';
+import { create } from '../controllers';
 
 const router = express.Router();
 
-router.post('/create', createChat);
+router.post('/create', create);
 
 export default router;

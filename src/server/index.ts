@@ -3,7 +3,7 @@ import path from 'path';
 import http from 'http';
 import WebSocket, { WebSocketServer } from 'ws';
 
-import { messageRoute, chatRoute } from './routes';
+import { chatRoute } from './routes';
 import { chatsMiddleware } from './middlewares';
 import { Chat, ClientMap, User } from './interfaces';
 import { initOnActions } from './ws';
@@ -28,7 +28,6 @@ app.use(
 );
 app.use(chatsMiddleware(CHATS_INSTANCES));
 
-app.use(`${BASE_URL}/message`, messageRoute);
 app.use(`${BASE_URL}/chat`, chatRoute);
 
 app.get('*', (req, res) => {

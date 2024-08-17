@@ -1,8 +1,8 @@
 import type { Request, Response, NextFunction } from 'express';
 
-import { createChatService } from '../services';
+import { createChat } from '../services';
 
-export const createChat = async (
+export const create = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -10,7 +10,7 @@ export const createChat = async (
   try {
     const { sender, receiver } = req.body;
 
-    res.json(createChatService({ sender, receiver }, res));
+    res.json(createChat({ sender, receiver }, res));
   } catch (error) {
     next(error);
   }
