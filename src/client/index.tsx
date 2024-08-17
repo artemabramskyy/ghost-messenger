@@ -1,9 +1,11 @@
-import { createRoot } from 'react-dom/client';
+import {createRoot} from 'react-dom/client';
 import App from './App';
-import { initWS } from './api';
-
-initWS();
+import {WSProvider} from "root/src/client/Context/Context";
 
 const container = document.getElementById('app')!;
 const root = createRoot(container);
-root.render(<App />);
+root.render(
+  <WSProvider>
+    <App/>
+  </WSProvider>
+);

@@ -2,8 +2,8 @@ export function initWS() {
   const socket = new WebSocket('ws://localhost:4000');
 
   socket.addEventListener('open', (event) => {
+    // send ID and username of the user
     console.log('Connected to WebSocket server');
-    socket.send('Hello Server!');
   });
 
   socket.addEventListener('message', (event) => {
@@ -17,4 +17,6 @@ export function initWS() {
   socket.addEventListener('error', (error) => {
     console.error('WebSocket error:', error);
   });
+
+  return socket;
 }
