@@ -1,6 +1,9 @@
-import { createRoot } from "react-dom/client";
-import App from "./App";
+import { createRoot } from 'react-dom/client';
+import App from './App';
+import { initWS } from './api';
 
-const container = document.getElementById("app")!;
+initWS();
+
+const container = document.getElementById('app')!;
 const root = createRoot(container);
-root.render(<App/>);
+root.render(<App />);

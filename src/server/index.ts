@@ -1,5 +1,7 @@
 import express from 'express';
 import path from 'path';
+import http from 'http';
+import WebSocket, { WebSocketServer } from 'ws';
 
 import { messageRoute, chatRoute } from './routes';
 import { chatsMiddleware } from './middlewares';
@@ -31,6 +33,29 @@ app.get('*', (req, res) => {
   res.sendFile(`${STATIC_PATH}/index.html`);
 });
 
-app.listen(PORT, () => {
+const server = http.createServer(app);
+const wss = new WebSocketServer({ server });
+
+wss.on('connection', (ws: WebSocket) => {
+  console.log('New client connected');
+
+  ws.send('Welcome to the WebSocket server!');
+
+  ws.on('message', (message: string) => {
+    console.log(`Received message: ${message}`);
+
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(`Broadcast: ${message}`);
+      }
+    });
+  });
+
+  ws.on('close', () => {
+    console.log('Client disconnected');
+  });
+});
+
+server.listen(PORT, () => {
   console.log(`🤖: Ghost Messenger server listening on port: ${PORT}`);
 });
