@@ -3,18 +3,15 @@ import type { Response } from 'express';
 import type { Chat } from '../interfaces';
 import { generateChatId } from '../utils';
 
-export const createChatService = async (
-  chat: Omit<Chat, 'id'>,
-  res: Response
-) => {
+export const createChat = (chat: Omit<Chat, 'id'>, res: Response) => {
   try {
     const { sender, receiver } = chat;
 
     const id = generateChatId({ sender, receiver });
     const CHATS_INSTANCES = res.locals.CHATS_INSTANCES;
-    const duplicateChat = CHATS_INSTANCES.find((chat: Chat) => chat.id === id);
+    const duplicatedChat = findChat(id, CHATS_INSTANCES);
 
-    if (!duplicateChat) {
+    if (!duplicatedChat) {
       CHATS_INSTANCES.push({ id, sender, receiver });
       res.locals.CHATS_INSTANCES = CHATS_INSTANCES;
 
@@ -22,6 +19,16 @@ export const createChatService = async (
     }
 
     return { message: 'There is already a such chat' };
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const findChat = (id: string, CHATS_INSTANCES: Chat[]) => {
+  try {
+    const foundChat = CHATS_INSTANCES.find((chat: Chat) => chat.id === id);
+
+    return foundChat;
   } catch (err) {
     throw err;
   }

@@ -5,7 +5,8 @@ import WebSocket, { WebSocketServer } from 'ws';
 
 import { messageRoute, chatRoute } from './routes';
 import { chatsMiddleware } from './middlewares';
-import { Chat } from './interfaces';
+import { Chat, ClientMap, User } from './interfaces';
+import { initOnActions } from './ws';
 
 const PORT = 4000;
 const BODY_PARSER_LIMIT = '2mb';
@@ -13,7 +14,8 @@ const API_BASE_PATH = '/api';
 const API_VERSION = 'v1';
 const BASE_URL = `${API_BASE_PATH}/${API_VERSION}`;
 const STATIC_PATH = path.join(__dirname, '../../dist/client');
-const CHATS_INSTANCES: Chat[] = [];
+const CHATS_INSTANCES: Chat[] = []; //FIXME: Use Map()
+const CLIENTS: ClientMap = new Map();
 
 const app = express();
 
@@ -34,26 +36,15 @@ app.get('*', (req, res) => {
 });
 
 const server = http.createServer(app);
+
 const wss = new WebSocketServer({ server });
 
-wss.on('connection', (ws: WebSocket) => {
-  console.log('New client connected');
+wss.on('connection', (ws: WebSocket, user: User) => {
+  const { id } = user;
+  CLIENTS.set(id, { id, ws });
+  console.log('Add client!', user);
 
-  ws.send('Welcome to the WebSocket server!');
-
-  ws.on('message', (message: string) => {
-    console.log(`Received message: ${message}`);
-
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(`Broadcast: ${message}`);
-      }
-    });
-  });
-
-  ws.on('close', () => {
-    console.log('Client disconnected');
-  });
+  initOnActions(id, CLIENTS, ws, CHATS_INSTANCES);
 });
 
 server.listen(PORT, () => {
