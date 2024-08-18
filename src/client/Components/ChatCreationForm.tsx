@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {MouseEventHandler, useEffect, useState} from 'react'
 import IMessage from "root/src/client/Interfaces/IMessage";
 import IChatCreationData from "root/src/client/Interfaces/IChatCreationData";
 import IUser from "root/src/client/Interfaces/IUser";
@@ -67,6 +67,9 @@ const ChatCreationForm = () => {
              name="receiver.id"
              onChange={handleChange}></input>
       <button onClick={createChat}>Create chat</button>
+      <button onClick={e => localStorage.clear()}>
+        Clear LocalStorage
+      </button>
     </form>
   )
 }
