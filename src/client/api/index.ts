@@ -3,6 +3,12 @@ export function initWS() {
 
   socket.addEventListener('open', (event) => {
     // send ID and username of the user
+    socket.send(
+      JSON.stringify({
+        type: 'auth',
+        user: { username: 'test', id: 'some_id' },
+      })
+    );
     console.log('Connected to WebSocket server');
   });
 

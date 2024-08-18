@@ -5,7 +5,7 @@ import WebSocket, { WebSocketServer } from 'ws';
 
 import { chatRoute } from './routes';
 import { chatsMiddleware } from './middlewares';
-import { Chat, ClientMap, User } from './interfaces';
+import { Chat, ClientMap } from './interfaces';
 import { initOnActions } from './ws';
 
 const PORT = 4000;
@@ -38,12 +38,8 @@ const server = http.createServer(app);
 
 const wss = new WebSocketServer({ server });
 
-wss.on('connection', (ws: WebSocket, user: User) => {
-  const { id } = user;
-  CLIENTS.set(id, { id, ws });
-  console.log('Add client!', user);
-
-  initOnActions(id, CLIENTS, ws, CHATS_INSTANCES);
+wss.on('connection', (ws: WebSocket) => {
+  initOnActions(CLIENTS, ws, CHATS_INSTANCES);
 });
 
 server.listen(PORT, () => {
