@@ -1,9 +1,12 @@
-import React, {MouseEventHandler, useEffect, useState} from 'react'
-import IMessage from "root/src/client/Interfaces/IMessage";
+import React, {useState} from 'react'
 import IChatCreationData from "root/src/client/Interfaces/IChatCreationData";
 import IUser from "root/src/client/Interfaces/IUser";
 
-const ChatCreationForm = () => {
+interface IChatCreationFormProps {
+  setIsMessageFormVisible: (arg: boolean) => void;
+}
+
+const ChatCreationForm = ({setIsMessageFormVisible}: IChatCreationFormProps) => {
   const URL = '';
   const [formData, setFormData] = useState<IChatCreationData>({
       sender: {username: '', id: ''},
@@ -47,6 +50,7 @@ const ChatCreationForm = () => {
       console.log(e)
     }
     saveToLocalStorage();
+    setIsMessageFormVisible(true);
   }
 
   // TODO: fix inputs they are not working!

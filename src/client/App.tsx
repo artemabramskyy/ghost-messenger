@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import {css} from "@emotion/react";
 import ChatCreationForm from "root/src/client/Components/ChatCreationForm";
 import MessageBox from "root/src/client/Components/MessageUI/MessageBox";
@@ -27,19 +27,31 @@ const styles = css`
   }
 `
 
-// make a form that will save a user`s login and save it to the
-// local storage, without name it is not possible to send a message
-// after saving a name generate an id of a user
+// TODO: add a possibility for sending messages from one account to another
 
 const App = () => {
+  const [isMessageFormVisible, setIsMessageFormVisible] = useState<boolean>(false);
+  const areSenderAndReceiverNotNull = () => {
+    const receiver = JSON.parse(localStorage.getItem('receiver')!);
+    const sender = JSON.parse(localStorage.getItem('sender')!);
+    return setIsMessageFormVisible(sender !== null && receiver !== null);
+  }
+
+  useEffect(() => {
+    areSenderAndReceiverNotNull();
+  }, [])
+
   return (
     <div className="app" css={styles}>
       <div className="chatCreation">
-        <ChatCreationForm/>
+        <ChatCreationForm
+          setIsMessageFormVisible={setIsMessageFormVisible}/>
       </div>
-      <div className="messageBox">
-        <MessageBox/>
-      </div>
+      {isMessageFormVisible ?
+        <div className="messageBox">
+          <MessageBox/>
+        </div> : null
+      }
     </div>
   )
 }

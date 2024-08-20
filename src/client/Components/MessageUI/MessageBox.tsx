@@ -17,20 +17,12 @@ const MessageBox = () => {
     setMessages([...(messages), message]);
   }
 
-  const areSenderAndReceiverNotNull = () => {
-    const receiver = JSON.parse(localStorage.getItem('receiver')!);
-    const sender = JSON.parse(localStorage.getItem('sender')!);
-    return sender !== null && receiver !== null;
-  }
-
   return (
     <div>
       {messages.map((message, i) => {
         return <Message message={message} index={i}/>
       })}
-      {areSenderAndReceiverNotNull() ?
-        <SendMessageForm addMessage={addMessage}/> : null
-      }
+      <SendMessageForm addMessage={addMessage}/>
     </div>
   )
 }

@@ -5,7 +5,7 @@ import WebSocket, { WebSocketServer } from 'ws';
 
 import { chatRoute } from './routes';
 import { chatsMiddleware } from './middlewares';
-import { Chat, ClientMap } from './interfaces';
+import {ChatMap, ClientMap} from './interfaces';
 import { initOnActions } from './ws';
 
 const PORT = 4000;
@@ -14,7 +14,7 @@ const API_BASE_PATH = '/api';
 const API_VERSION = 'v1';
 const BASE_URL = `${API_BASE_PATH}/${API_VERSION}`;
 const STATIC_PATH = path.join(__dirname, '../../dist/client');
-const CHATS_INSTANCES: Chat[] = []; //FIXME: Use Map()
+const CHATS_INSTANCES: ChatMap = new Map();
 const CLIENTS: ClientMap = new Map();
 
 const app = express();

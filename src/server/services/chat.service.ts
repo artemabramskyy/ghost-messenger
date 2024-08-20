@@ -1,6 +1,6 @@
 import type { Response } from 'express';
 
-import type { Chat } from '../interfaces';
+import type {Chat, ChatMap} from '../interfaces';
 import { generateChatId } from '../utils';
 
 export const createChat = (chat: Omit<Chat, 'id'>, res: Response) => {
@@ -24,9 +24,9 @@ export const createChat = (chat: Omit<Chat, 'id'>, res: Response) => {
   }
 };
 
-export const findChat = (id: string, CHATS_INSTANCES: Chat[]) => {
+export const findChat = (id: string, CHATS_INSTANCES: ChatMap) => {
   try {
-    const foundChat = CHATS_INSTANCES.find((chat: Chat) => chat.id === id);
+    const foundChat = CHATS_INSTANCES.get(id);
 
     return foundChat;
   } catch (err) {

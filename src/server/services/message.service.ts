@@ -1,8 +1,8 @@
-import { Chat } from '../interfaces';
+import {Chat, ChatMap} from '../interfaces';
 import { generateChatId } from '../utils';
 import { findChat } from './chat.service';
 
-export const processMessage = (chat: Chat, CHATS_INSTANCES: Chat[]) => {
+export const processMessage = (chat: Chat, CHATS_INSTANCES: ChatMap) => {
   try {
     const id = generateChatId(chat);
     const foundChat = findChat(id, CHATS_INSTANCES);

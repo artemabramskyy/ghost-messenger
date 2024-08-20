@@ -1,12 +1,13 @@
 import WebSocket from 'ws';
 
-import { Chat, ClientMap } from '../interfaces';
-import { processMessage } from '../services';
+import {ChatMap, ClientMap} from '../interfaces';
+import {processMessage} from '../services';
+import {generateChatId} from "root/src/server/utils";
 
 export function initOnActions(
   CLIENTS: ClientMap,
   ws: WebSocket,
-  CHATS_INSTANCES: Chat[]
+  CHATS_INSTANCES: ChatMap
 ) {
   ws.send('Welcome to the WebSocket server!');
 
@@ -15,24 +16,28 @@ export function initOnActions(
     const data = JSON.parse(message);
 
     if (data.type === 'auth') {
-      const { id } = data.user;
+      const {user, chat} = data;
+      const {id} = user;
+      const chatId = generateChatId(chat);
 
-      CLIENTS.set(id, { id, ws });
-      console.log('Add client!', data.user);
+      CHATS_INSTANCES.set(chatId, chat);
+      CLIENTS.set(id, {id, ws});
+      console.log('Add client!', user);
 
       ws.on('close', () => {
-        console.log('Client disconnected', data.user);
+        console.log('Client disconnected', user);
         CLIENTS.delete(id);
       });
     } else {
-      console.log('***', data);
-      const { receiver } = processMessage(data.chat, CHATS_INSTANCES);
+      const {message, chat} = data;
+      console.log('***', data, CHATS_INSTANCES);
+      const {receiver} = processMessage(chat, CHATS_INSTANCES);
 
       const client = CLIENTS.get(receiver.id);
 
       if (client) {
-        console.log(`Send message: ${data.message}`);
-        client.ws.send(data.message);
+        console.log(`Send message: ${message}`);
+        client.ws.send(message);
       }
     }
   });

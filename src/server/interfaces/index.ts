@@ -17,3 +17,4 @@ export interface Client {
 }
 
 export type ClientMap = Map<string, Client>;
+export type ChatMap = Map<string, Chat>;
