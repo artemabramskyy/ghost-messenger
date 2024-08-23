@@ -1,18 +1,20 @@
 import type { Response } from 'express';
 
-import type {Chat, ChatMap} from '../interfaces';
+
 import { generateChatId } from '../utils';
+import {ChatMap, Chat} from "root/src/interfaces/Chat";
 
 export const createChat = (chat: Omit<Chat, 'id'>, res: Response) => {
   try {
     const { sender, receiver } = chat;
 
     const id = generateChatId({ sender, receiver });
-    const CHATS_INSTANCES = res.locals.CHATS_INSTANCES;
+    const CHATS_INSTANCES: ChatMap = res.locals.CHATS_INSTANCES;
     const duplicatedChat = findChat(id, CHATS_INSTANCES);
 
     if (!duplicatedChat) {
-      CHATS_INSTANCES.push({ id, sender, receiver });
+      const chat : Chat = { id, sender, receiver };
+      CHATS_INSTANCES.set(id, chat);
       res.locals.CHATS_INSTANCES = CHATS_INSTANCES;
 
       return { message: 'Created new chat' };

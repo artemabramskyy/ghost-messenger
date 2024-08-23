@@ -4,7 +4,7 @@ import React, {
   ReactNode,
   useState, useEffect,
 } from 'react';
-import {initWS} from "root/src/client/api";
+import {initWS} from "../Api";
 
 interface MyContextType {
   value: string;
@@ -13,6 +13,7 @@ interface MyContextType {
 
 interface WSContext {
   webSocket: WebSocket | null;
+  URL: string
 }
 
 const WSContext = createContext<WSContext | undefined>(undefined);
@@ -25,7 +26,8 @@ export const WSProvider: React.FC<{ children: ReactNode }> = ({children}) => {
   }, []);
 
   return (
-    <WSContext.Provider value={{webSocket}}>
+    <WSContext.Provider
+      value={{webSocket, URL: "http://localhost:4000/api/v1"}}>
       {children}
     </WSContext.Provider>
   );

@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import {css} from "@emotion/react";
 import ChatCreationForm from "root/src/client/Components/ChatCreationForm";
 import MessageBox from "root/src/client/Components/MessageUI/MessageBox";
+import {useWSContext} from "root/src/client/Context/Context";
 
 const styles = css`
   display: flex;

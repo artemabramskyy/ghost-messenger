@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import type {ChatMap} from '../interfaces';
+import {ChatMap} from "root/src/interfaces/Chat";
 
 export const chatsMiddleware =
   (CHATS_INSTANCES: ChatMap) =>

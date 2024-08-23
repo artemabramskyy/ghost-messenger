@@ -5,8 +5,9 @@ import WebSocket, { WebSocketServer } from 'ws';
 
 import { chatRoute } from './routes';
 import { chatsMiddleware } from './middlewares';
-import {ChatMap, ClientMap} from './interfaces';
 import { initOnActions } from './ws';
+import {ChatMap} from "root/src/interfaces/Chat";
+import {ClientMap} from "root/src/interfaces/Client";
 
 const PORT = 4000;
 const BODY_PARSER_LIMIT = '2mb';

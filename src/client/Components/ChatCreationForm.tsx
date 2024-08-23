@@ -1,22 +1,23 @@
 import React, {useState} from 'react'
-import IChatCreationData from "root/src/client/Interfaces/IChatCreationData";
-import IUser from "root/src/client/Interfaces/IUser";
+import ChatCreationData from "root/src/interfaces/ChatCreationData";
+import User from "root/src/interfaces/User";
+import {useWSContext} from "root/src/client/Context/Context";
 
 interface IChatCreationFormProps {
   setIsMessageFormVisible: (arg: boolean) => void;
 }
 
 const ChatCreationForm = ({setIsMessageFormVisible}: IChatCreationFormProps) => {
-  const URL = '';
-  const [formData, setFormData] = useState<IChatCreationData>({
+  const { URL} = useWSContext();
+  const [formData, setFormData] = useState<ChatCreationData>({
       sender: {username: '', id: ''},
       receiver: {username: '', id: ''}
     }
   );
 
   const saveToLocalStorage = () => {
-    const sender: IUser = formData.sender;
-    const receiver: IUser = formData.receiver;
+    const sender: User = formData.sender;
+    const receiver: User = formData.receiver;
     localStorage.setItem('sender', JSON.stringify(sender));
     localStorage.setItem('receiver', JSON.stringify(receiver));
   }
@@ -28,7 +29,7 @@ const ChatCreationForm = ({setIsMessageFormVisible}: IChatCreationFormProps) => 
     setFormData(prevState => ({
       ...prevState,
       [parent]: {
-        ...prevState[parent as keyof IChatCreationData],
+        ...prevState[parent as keyof ChatCreationData],
         [key]: value
       }
     }));
@@ -36,8 +37,13 @@ const ChatCreationForm = ({setIsMessageFormVisible}: IChatCreationFormProps) => 
 
   const createChat = async (e: React.MouseEvent) => {
     e.preventDefault();
+    const hasEmptyField = Object.values(formData.sender).concat(Object.values(formData.receiver)).some(value => value === '');
+    if (hasEmptyField) {
+      console.log("You cannot create a chat with some of the fields empty!")
+      return;
+    }
     try {
-      const result = await fetch(URL, {
+      const result = await fetch(`${URL}/chat/create`, {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',

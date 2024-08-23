@@ -1,6 +1,5 @@
-import { createHash } from 'crypto';
-
-import { Chat } from '../interfaces';
+import {createHash} from 'crypto';
+import {Chat} from "root/src/interfaces/Chat";
 
 export function uuid(data: string) {
   const hash = createHash('sha256');

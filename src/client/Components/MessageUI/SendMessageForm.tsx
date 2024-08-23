@@ -1,17 +1,15 @@
 import React, {useState} from 'react'
-import IMessage from "root/src/client/Interfaces/IMessage";
-import IUser from "root/src/client/Interfaces/IUser";
+import Message from "root/src/interfaces/Message";
 import {useWSContext} from "root/src/client/Context/Context";
 
 interface ISendMessageFormProps {
-  addMessage: (message: IMessage) => void;
+  addMessage: (message: Message) => void;
 }
 
 const SendMessageForm = ({addMessage}: ISendMessageFormProps) => {
   const {webSocket} = useWSContext();
-  const URL = '/api/v1/message/send';
   const [text, setText] = useState<string>('');
-  const [message, setMessage] = useState<IMessage>({
+  const [message, setMessage] = useState<Message>({
     receiver: {username: '', id: ''},
     sender: {username: '', id: ''},
     text
@@ -27,7 +25,7 @@ const SendMessageForm = ({addMessage}: ISendMessageFormProps) => {
         chat: {sender, receiver},
         message: text
       }));
-      const message: IMessage = {
+      const message: Message = {
         receiver,
         sender,
         text,

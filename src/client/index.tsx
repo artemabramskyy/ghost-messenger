@@ -5,7 +5,7 @@ import {WSProvider} from "root/src/client/Context/Context";
 const container = document.getElementById('app')!;
 const root = createRoot(container);
 root.render(
-  <WSProvider>
-    <App/>
-  </WSProvider>
+    <WSProvider>
+            <App/>
+    </WSProvider>
 );

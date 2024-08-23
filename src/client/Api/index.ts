@@ -8,6 +8,8 @@ export function initWS() {
     if (sender === null || receiver === null)  {
       console.log("Cannot authenticate user, because sender or receiver is null");
     } else {
+      console.log(sender);
+      console.log(receiver);
       socket.send(
         JSON.stringify({
           type: 'auth',

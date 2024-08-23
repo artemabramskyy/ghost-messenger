@@ -1,8 +1,9 @@
 import WebSocket from 'ws';
 
-import {ChatMap, ClientMap} from '../interfaces';
 import {processMessage} from '../services';
 import {generateChatId} from "root/src/server/utils";
+import {ClientMap} from "root/src/interfaces/Client";
+import {ChatMap} from "root/src/interfaces/Chat";
 
 export function initOnActions(
   CLIENTS: ClientMap,
