@@ -10,7 +10,7 @@ export function initOnActions(
   ws: WebSocket,
   CHATS_INSTANCES: ChatMap
 ) {
-  ws.send('Welcome to the WebSocket server!');
+  // ws.send('Welcome to the WebSocket server!');
 
   ws.on('message', (message: any) => {
     console.log(`Received message: ${message}`);
@@ -33,9 +33,7 @@ export function initOnActions(
       const {message, chat} = data;
       console.log('***', data, CHATS_INSTANCES);
       const {receiver} = processMessage(chat, CHATS_INSTANCES);
-
       const client = CLIENTS.get(receiver.id);
-
       if (client) {
         console.log(`Send message: ${message}`);
         client.ws.send(message);

@@ -17,7 +17,6 @@ const SendMessageForm = ({addMessage}: ISendMessageFormProps) => {
 
   const sendMessage = async (e: React.MouseEvent) => {
     e.preventDefault();
-    console.log(text);
     const receiver = JSON.parse(localStorage.getItem('receiver')!);
     const sender = JSON.parse(localStorage.getItem('sender')!);
     if (webSocket && webSocket.readyState === WebSocket.OPEN) {

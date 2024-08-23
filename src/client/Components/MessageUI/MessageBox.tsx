@@ -20,6 +20,17 @@ const MessageBox = () => {
     setMessages([...(messages), message]);
   }
 
+  useEffect(() => {
+    if (webSocket) {
+      webSocket.onmessage = (event) => {
+        const sender = JSON.parse(localStorage.getItem('sender')!);
+        const receiver = JSON.parse(localStorage.getItem('receiver')!);
+        const message: Message = {sender, receiver, text: event.data};
+        addMessage(message);
+      }
+    }
+  }, []);
+
   return (
     <div>
       {messages.map((message, i) => {

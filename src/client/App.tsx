@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react'
 import {css} from "@emotion/react";
 import ChatCreationForm from "root/src/client/Components/ChatCreationForm";
 import MessageBox from "root/src/client/Components/MessageUI/MessageBox";
-import {useWSContext} from "root/src/client/Context/Context";
 
 const styles = css`
   display: flex;
@@ -35,7 +34,7 @@ const App = () => {
   const areSenderAndReceiverNotNull = () => {
     const receiver = JSON.parse(localStorage.getItem('receiver')!);
     const sender = JSON.parse(localStorage.getItem('sender')!);
-    return setIsMessageFormVisible(sender !== null && receiver !== null);
+    setIsMessageFormVisible(sender !== null && receiver !== null);
   }
 
   useEffect(() => {

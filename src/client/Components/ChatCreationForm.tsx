@@ -8,7 +8,7 @@ interface IChatCreationFormProps {
 }
 
 const ChatCreationForm = ({setIsMessageFormVisible}: IChatCreationFormProps) => {
-  const { URL} = useWSContext();
+  const {URL, webSocket} = useWSContext();
   const [formData, setFormData] = useState<ChatCreationData>({
       sender: {username: '', id: ''},
       receiver: {username: '', id: ''}
@@ -51,6 +51,16 @@ const ChatCreationForm = ({setIsMessageFormVisible}: IChatCreationFormProps) => 
         method: 'POST',
         body: JSON.stringify({...formData})
       });
+      if (webSocket) {
+        webSocket.send(
+          JSON.stringify({
+            type: 'auth',
+            user: {username: formData.sender.username, id: formData.sender.id},
+            chat: {sender: formData.sender, receiver: formData.receiver}
+          }));
+      } else {
+        throw new Error('WS is not opened for sending the message');
+      }
       console.log("chat created!");
     } catch (e) {
       console.log(e)
