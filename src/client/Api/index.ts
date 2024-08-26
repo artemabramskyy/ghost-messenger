@@ -3,18 +3,15 @@ export function initWS() {
 
   socket.addEventListener('open', (event) => {
     // send ID and username of the user
-    const sender = JSON.parse(localStorage.getItem('sender')!);
-    const receiver = JSON.parse(localStorage.getItem('receiver')!);
-    if (sender === null || receiver === null)  {
-      console.log("Cannot authenticate user, because sender or receiver is null");
+    const user = JSON.parse(localStorage.getItem('sender')!);
+    if (user === null) {
+      console.log("Cannot authenticate user, because sender is null");
     } else {
-      console.log(sender);
-      console.log(receiver);
+      const {username, id} = user;
       socket.send(
         JSON.stringify({
           type: 'auth',
-          user: {username: sender.username, id: sender.id},
-          chat: {sender, receiver}
+          user: {username, id},
         })
       );
     }

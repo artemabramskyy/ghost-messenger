@@ -37,6 +37,7 @@ const SendMessageForm = ({addMessage}: ISendMessageFormProps) => {
 
   return (
     <form>
+      <h3>Send a message!</h3>
       <input placeholder="your message"
              onChange={(e) => {
                setText(e.target.value)

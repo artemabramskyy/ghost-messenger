@@ -18,6 +18,15 @@ const MessageBox = () => {
 
   const addMessage = (message: Message) => {
     setMessages([...(messages), message]);
+    const chat = JSON.parse(localStorage.getItem("chat")!);
+    if (chat !== null) {
+      chat.messages.push({
+        text: message.text,
+        receiverId: message.receiver.id,
+        senderId: message.sender.id,
+      });
+      localStorage.setItem('chat', JSON.stringify(chat));
+    }
   }
 
   useEffect(() => {

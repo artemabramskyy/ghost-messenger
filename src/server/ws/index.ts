@@ -10,13 +10,21 @@ export function initOnActions(
   ws: WebSocket,
   CHATS_INSTANCES: ChatMap
 ) {
-  // ws.send('Welcome to the WebSocket server!');
+  // ws.send('Welcome to the WebSocket server!';
 
   ws.on('message', (message: any) => {
     console.log(`Received message: ${message}`);
     const data = JSON.parse(message);
 
     if (data.type === 'auth') {
+      const {user} = data;
+      const {id} = user;
+      CLIENTS.set(id, {id, ws});
+      ws.on('close', () => {
+        console.log('Client disconnected', user);
+        CLIENTS.delete(id);
+      });
+    } else if (data.type === 'auth-chat') {
       const {user, chat} = data;
       const {id} = user;
       const chatId = generateChatId(chat);
