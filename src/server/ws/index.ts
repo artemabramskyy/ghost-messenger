@@ -1,7 +1,6 @@
 import WebSocket from 'ws';
 
 import {processMessage} from '../services';
-import {generateChatId} from "root/src/server/utils";
 import {ClientMap} from "root/src/interfaces/Client";
 import {ChatMap} from "root/src/interfaces/Chat";
 
@@ -24,27 +23,28 @@ export function initOnActions(
         console.log('Client disconnected', user);
         CLIENTS.delete(id);
       });
-    } else if (data.type === 'auth-chat') {
-      const {user, chat} = data;
-      const {id} = user;
-      const chatId = generateChatId(chat);
-
-      CHATS_INSTANCES.set(chatId, chat);
-      CLIENTS.set(id, {id, ws});
-      console.log('Add client!', user);
-
-      ws.on('close', () => {
-        console.log('Client disconnected', user);
-        CLIENTS.delete(id);
-      });
-    } else {
+    } else if (data.type === 'chatExistenceRequest') {
+      const {sender, receiver} = data;
+      const client = CLIENTS.get(receiver.id);
+      if (client) {
+        client.ws.send(JSON.stringify({
+          sender,
+          receiver,
+          type: 'chatExistenceResponse'
+        }));
+      }
+    } else if (data.type === 'chatMessageRequest') {
       const {message, chat} = data;
-      console.log('***', data, CHATS_INSTANCES);
-      const {receiver} = processMessage(chat, CHATS_INSTANCES);
+      processMessage(chat, CHATS_INSTANCES);
+      const {receiver} = chat;
       const client = CLIENTS.get(receiver.id);
       if (client) {
         console.log(`Send message: ${message}`);
-        client.ws.send(message);
+        // rn I am not checking for the type
+        client.ws.send(JSON.stringify({
+          text: message,
+          type: 'chatMessageResponse'
+        }));
       }
     }
   });

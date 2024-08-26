@@ -1,26 +1,29 @@
-import type { Response } from 'express';
-
-
-import { generateChatId } from '../utils';
+import type {Response} from 'express';
+import {generateChatId} from '../utils';
 import {ChatMap, Chat} from "root/src/interfaces/Chat";
+import {findClient} from "root/src/server/services/client.service";
 
 export const createChat = (chat: Omit<Chat, 'id'>, res: Response) => {
   try {
-    const { sender, receiver } = chat;
-
-    const id = generateChatId({ sender, receiver });
+    const {sender, receiver} = chat;
+    const CLIENTS = res.locals.CLIENTS;
+    const receiverClient = findClient(receiver.id, CLIENTS);
+    if (receiverClient === null) {
+      return {message: 'Receiver is not authorized yet'};
+    }
+    const id = generateChatId({sender, receiver});
     const CHATS_INSTANCES: ChatMap = res.locals.CHATS_INSTANCES;
     const duplicatedChat = findChat(id, CHATS_INSTANCES);
 
     if (!duplicatedChat) {
-      const chat : Chat = { id, sender, receiver };
+      const chat: Chat = {id, sender, receiver};
       CHATS_INSTANCES.set(id, chat);
       res.locals.CHATS_INSTANCES = CHATS_INSTANCES;
 
-      return { message: 'Created new chat' };
+      return {message: 'Created new chat'};
     }
 
-    return { message: 'There is already a such chat' };
+    return {message: 'There is already a such chat'};
   } catch (err) {
     throw err;
   }

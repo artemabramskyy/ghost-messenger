@@ -1,14 +1,19 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import ChatCreationData from "root/src/interfaces/ChatCreationData";
 import User from "root/src/interfaces/User";
 import {useWSContext} from "root/src/client/Context/Context";
 import StoredChat from "root/src/interfaces/StoredChat";
 
-interface IChatCreationFormProps {
+interface ChatCreationFormProps {
   setIsMessageFormVisible: (arg: boolean) => void;
 }
 
-const ChatCreationForm = ({setIsMessageFormVisible}: IChatCreationFormProps) => {
+interface CreateChatResponse {
+  message: string;
+  chatId: string;
+}
+
+const ChatCreationForm = ({setIsMessageFormVisible}: ChatCreationFormProps) => {
   const {URL, webSocket} = useWSContext();
   const [formData, setFormData] = useState<ChatCreationData>({
       sender: {username: '', id: ''},
@@ -18,11 +23,11 @@ const ChatCreationForm = ({setIsMessageFormVisible}: IChatCreationFormProps) => 
 
   const saveToLocalStorage = () => {
     const sender: User = formData.sender;
-    const receiver: User = formData.receiver
+    const receiver: User = formData.receiver;
     const chat: StoredChat = {
       messages: [],
       sender,
-      receiver
+      receiver,
     };
     localStorage.setItem('sender', JSON.stringify(sender));
     localStorage.setItem('receiver', JSON.stringify(receiver));
@@ -46,7 +51,7 @@ const ChatCreationForm = ({setIsMessageFormVisible}: IChatCreationFormProps) => 
     formData.sender = JSON.parse(localStorage.getItem("sender")!);
     const hasEmptyField = Object.values(formData.sender).concat(Object.values(formData.receiver)).some(value => value === '');
     if (hasEmptyField) {
-      alert("You cannot create a chat with some of the fields empty!")
+      alert("You cannot create a chat with some of the fields empty!");
       return;
     }
     try {
@@ -58,13 +63,36 @@ const ChatCreationForm = ({setIsMessageFormVisible}: IChatCreationFormProps) => 
         method: 'POST',
         body: JSON.stringify({...formData})
       });
-      console.log("chat created!");
+      saveToLocalStorage();
+      setIsMessageFormVisible(true);
+      if(webSocket) {
+        webSocket.send(JSON.stringify({
+          type: 'chatExistenceRequest',
+          ...formData
+        }));
+      }
     } catch (e) {
       console.log(e)
     }
-    saveToLocalStorage();
-    setIsMessageFormVisible(true);
   }
+
+  useEffect(() => {
+    if (webSocket) {
+      webSocket.onmessage = (event) => {
+        try {
+          const message = JSON.parse(event.data);
+          if (message.type === 'chatExistenceResponse') {
+            formData.receiver = message.sender;
+            formData.sender = message.receiver;
+            saveToLocalStorage();
+            setIsMessageFormVisible(true);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+  }, []);
 
   return (
     <form>

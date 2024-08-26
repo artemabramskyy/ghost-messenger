@@ -27,7 +27,7 @@ app.use(
     extended: true,
   })
 );
-app.use(chatsMiddleware(CHATS_INSTANCES));
+app.use(chatsMiddleware(CHATS_INSTANCES, CLIENTS));
 
 app.use(`${BASE_URL}/chat`, chatRoute);
 

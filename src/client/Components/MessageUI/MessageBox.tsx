@@ -5,6 +5,7 @@ import SendMessageForm
 import Message from "root/src/interfaces/Message";
 import ChatMessage from "root/src/client/Components/MessageUI/ChatMessage";
 import {useWSContext} from "root/src/client/Context/Context";
+import StoredMessage from "root/src/interfaces/StoredMessage";
 
 const styles = css`
   display: flex;
@@ -17,7 +18,7 @@ const MessageBox = () => {
   const {URL, webSocket} = useWSContext();
 
   const addMessage = (message: Message) => {
-    setMessages([...(messages), message]);
+    setMessages(prevMessages => [...prevMessages, message]);
     const chat = JSON.parse(localStorage.getItem("chat")!);
     if (chat !== null) {
       chat.messages.push({
@@ -30,12 +31,35 @@ const MessageBox = () => {
   }
 
   useEffect(() => {
+    const chat = JSON.parse(localStorage.getItem("chat")!);
+    const sender = JSON.parse(localStorage.getItem('sender')!);
+    const receiver = JSON.parse(localStorage.getItem('receiver')!);
+    if (chat !== null && sender !== null && receiver !== null) {
+      const storedMessages: StoredMessage[] = chat.messages;
+      storedMessages.forEach((storedMessage) => {
+        const constructedMessage: Message = {
+          text: storedMessage.text,
+          sender,
+          receiver
+        };
+        setMessages(prevMessages => [...prevMessages, constructedMessage]);
+      })
+
+    }
     if (webSocket) {
       webSocket.onmessage = (event) => {
-        const sender = JSON.parse(localStorage.getItem('sender')!);
-        const receiver = JSON.parse(localStorage.getItem('receiver')!);
-        const message: Message = {sender, receiver, text: event.data};
-        addMessage(message);
+        const data = JSON.parse(event.data);
+        if (data.type === 'chatMessageResponse') {
+          console.log(data);
+          const sender = JSON.parse(localStorage.getItem('sender')!);
+          const receiver = JSON.parse(localStorage.getItem('receiver')!);
+          const message: Message = {
+            receiver: sender,
+            sender: receiver,
+            text: data.text
+          };
+          addMessage(message);
+        }
       }
     }
   }, []);

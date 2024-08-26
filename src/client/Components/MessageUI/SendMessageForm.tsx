@@ -9,18 +9,13 @@ interface ISendMessageFormProps {
 const SendMessageForm = ({addMessage}: ISendMessageFormProps) => {
   const {webSocket} = useWSContext();
   const [text, setText] = useState<string>('');
-  const [message, setMessage] = useState<Message>({
-    receiver: {username: '', id: ''},
-    sender: {username: '', id: ''},
-    text
-  });
-
   const sendMessage = async (e: React.MouseEvent) => {
     e.preventDefault();
     const receiver = JSON.parse(localStorage.getItem('receiver')!);
     const sender = JSON.parse(localStorage.getItem('sender')!);
     if (webSocket && webSocket.readyState === WebSocket.OPEN) {
       webSocket.send(JSON.stringify({
+        type: 'chatMessageRequest',
         chat: {sender, receiver},
         message: text
       }));

@@ -5,7 +5,9 @@ export function initWS() {
     // send ID and username of the user
     const user = JSON.parse(localStorage.getItem('sender')!);
     if (user === null) {
-      console.log("Cannot authenticate user, because sender is null");
+      console.log("Cannot authenticate user, because user is null");
+    } else if (Object.values(user).some(value => value === '')) {
+      console.log("Cannot authenticate user, because user has empty fields");
     } else {
       const {username, id} = user;
       socket.send(
