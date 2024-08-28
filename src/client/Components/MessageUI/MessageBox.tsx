@@ -4,7 +4,10 @@ import SendMessageForm
   from "root/src/client/Components/MessageUI/SendMessageForm";
 import Message from "root/src/interfaces/Message";
 import ChatMessage from "root/src/client/Components/MessageUI/ChatMessage";
-import {useWSContext} from "root/src/client/Context/Context";
+import {
+  useTypeGuardContext,
+  useWSContext
+} from "root/src/client/Context/Context";
 import StoredMessage from "root/src/interfaces/StoredMessage";
 
 const styles = css`
@@ -15,13 +18,14 @@ const styles = css`
 
 const MessageBox = () => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const {URL, webSocket} = useWSContext();
+  const {webSocket} = useWSContext();
+  const {isChatConsistent, isUserConsistent} = useTypeGuardContext();
 
   const addMessage = (message: Message) => {
     setMessages(prevMessages => [...prevMessages, message]);
     const chat = JSON.parse(localStorage.getItem("chat")!);
     if (chat !== null) {
-      chat.messages.push({
+      chat.storedMessages.push({
         text: message.text,
         receiverId: message.receiver.id,
         senderId: message.sender.id,
@@ -34,8 +38,8 @@ const MessageBox = () => {
     const chat = JSON.parse(localStorage.getItem("chat")!);
     const sender = JSON.parse(localStorage.getItem('sender')!);
     const receiver = JSON.parse(localStorage.getItem('receiver')!);
-    if (chat !== null && sender !== null && receiver !== null) {
-      const storedMessages: StoredMessage[] = chat.messages;
+    if (isUserConsistent(sender) && isUserConsistent(receiver) && isChatConsistent(chat) && chat.storedMessages.length != 0) {
+      const storedMessages: StoredMessage[] = chat.storedMessages;
       storedMessages.forEach((storedMessage) => {
         const constructedMessage: Message = {
           text: storedMessage.text,
@@ -44,7 +48,6 @@ const MessageBox = () => {
         };
         setMessages(prevMessages => [...prevMessages, constructedMessage]);
       })
-
     }
     if (webSocket) {
       webSocket.onmessage = (event) => {

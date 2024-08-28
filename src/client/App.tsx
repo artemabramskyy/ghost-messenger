@@ -3,7 +3,10 @@ import {css} from "@emotion/react";
 import ChatCreationForm from "root/src/client/Components/Auth/ChatCreationForm";
 import MessageBox from "root/src/client/Components/MessageUI/MessageBox";
 import AuthForm from "root/src/client/Components/Auth/AuthForm";
-import {useWSContext} from "root/src/client/Context/Context";
+import {
+  useTypeGuardContext,
+  useWSContext
+} from "root/src/client/Context/Context";
 
 const styles = css`
   display: flex;
@@ -32,6 +35,7 @@ const styles = css`
 // TODO: add a possibility for sending messages from one account to another
 
 const App = () => {
+  const {isUserConsistent, isChatConsistent} = useTypeGuardContext();
   const [isUserInLocalStorage, setIsUserInLocalStorage] = useState<boolean>(false);
   const [isChatInLocalStorage, setIsChatInLocalStorage] = useState<boolean>(false);
 
@@ -39,8 +43,9 @@ const App = () => {
     const receiver = JSON.parse(localStorage.getItem('receiver')!);
     const sender = JSON.parse(localStorage.getItem('sender')!);
     const chat = JSON.parse(localStorage.getItem('chat')!);
-    setIsUserInLocalStorage(sender !== null);
-    setIsChatInLocalStorage(sender !== null && receiver !== null && chat !== null);
+    console.log(isUserConsistent(sender), isChatConsistent(chat))
+    setIsUserInLocalStorage(isUserConsistent(sender));
+    setIsChatInLocalStorage(isUserConsistent(sender) && isUserConsistent(receiver) && isChatConsistent(chat));
   }
 
   useEffect(() => {

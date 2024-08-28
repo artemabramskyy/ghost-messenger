@@ -8,11 +8,6 @@ interface ChatCreationFormProps {
   setIsMessageFormVisible: (arg: boolean) => void;
 }
 
-interface CreateChatResponse {
-  message: string;
-  chatId: string;
-}
-
 const ChatCreationForm = ({setIsMessageFormVisible}: ChatCreationFormProps) => {
   const {URL, webSocket} = useWSContext();
   const [formData, setFormData] = useState<ChatCreationData>({
@@ -25,7 +20,7 @@ const ChatCreationForm = ({setIsMessageFormVisible}: ChatCreationFormProps) => {
     const sender: User = formData.sender;
     const receiver: User = formData.receiver;
     const chat: StoredChat = {
-      messages: [],
+      storedMessages: [],
       sender,
       receiver,
     };

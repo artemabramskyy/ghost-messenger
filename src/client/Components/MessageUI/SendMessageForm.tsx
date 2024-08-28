@@ -1,6 +1,9 @@
 import React, {useState} from 'react'
 import Message from "root/src/interfaces/Message";
-import {useWSContext} from "root/src/client/Context/Context";
+import {
+  useTypeGuardContext,
+  useWSContext
+} from "root/src/client/Context/Context";
 
 interface ISendMessageFormProps {
   addMessage: (message: Message) => void;
@@ -8,11 +11,16 @@ interface ISendMessageFormProps {
 
 const SendMessageForm = ({addMessage}: ISendMessageFormProps) => {
   const {webSocket} = useWSContext();
+  const {isUserConsistent} = useTypeGuardContext();
   const [text, setText] = useState<string>('');
   const sendMessage = async (e: React.MouseEvent) => {
     e.preventDefault();
     const receiver = JSON.parse(localStorage.getItem('receiver')!);
     const sender = JSON.parse(localStorage.getItem('sender')!);
+    if (!isUserConsistent(sender) || !isUserConsistent(receiver)) {
+      console.log(isUserConsistent(sender), isUserConsistent(receiver))
+      throw Error('Data for sending the message is not valid');
+    }
     if (webSocket && webSocket.readyState === WebSocket.OPEN) {
       webSocket.send(JSON.stringify({
         type: 'chatMessageRequest',
