@@ -1,11 +1,11 @@
 import express from 'express';
 import path from 'path';
 import http from 'http';
-import WebSocket, { WebSocketServer } from 'ws';
+import WebSocket, {WebSocketServer} from 'ws';
 
-import { chatRoute } from './routes';
-import { chatsMiddleware } from './middlewares';
-import { initOnActions } from './ws';
+import {chatRoute} from './routes';
+import {chatsMiddleware} from './middlewares';
+import {initOnActions} from './ws';
 import {ChatMap} from "root/src/interfaces/Chat";
 import {ClientMap} from "root/src/interfaces/Client";
 
@@ -21,7 +21,7 @@ const CLIENTS: ClientMap = new Map();
 const app = express();
 
 app.use(express.static(STATIC_PATH));
-app.use(express.json({ limit: BODY_PARSER_LIMIT }));
+app.use(express.json({limit: BODY_PARSER_LIMIT}));
 app.use(
   express.urlencoded({
     extended: true,
@@ -37,7 +37,7 @@ app.get('*', (req, res) => {
 
 const server = http.createServer(app);
 
-const wss = new WebSocketServer({ server });
+export const wss = new WebSocketServer({server});
 
 wss.on('connection', (ws: WebSocket) => {
   initOnActions(CLIENTS, ws, CHATS_INSTANCES);
