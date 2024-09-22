@@ -7,6 +7,10 @@ import {
   useTypeGuardContext,
   useWSContext
 } from "root/src/client/Context/Context";
+import {authReq, createChatReq} from "root/src/client/Api";
+import {Receiver, Sender} from "root/src/interfaces/User";
+import StoredChat from "root/src/interfaces/StoredChat";
+import AppRouter from "root/src/client/Router/AppRouter";
 
 const styles = css`
   display: flex;
@@ -36,13 +40,14 @@ const styles = css`
 
 const App = () => {
   const {isUserConsistent, isChatConsistent} = useTypeGuardContext();
+  const {webSocket} = useWSContext();
   const [isUserInLocalStorage, setIsUserInLocalStorage] = useState<boolean>(false);
   const [isChatInLocalStorage, setIsChatInLocalStorage] = useState<boolean>(false);
 
   const checkAndLoadLocalStorage = () => {
-    const receiver = JSON.parse(localStorage.getItem('receiver')!);
-    const sender = JSON.parse(localStorage.getItem('sender')!);
-    const chat = JSON.parse(localStorage.getItem('chat')!);
+    const receiver = JSON.parse(localStorage.getItem('receiver')!) as Receiver;
+    const sender = JSON.parse(localStorage.getItem('sender')!) as Sender;
+    const chat = JSON.parse(localStorage.getItem('chat')!) as StoredChat;
     console.log(isUserConsistent(sender), isChatConsistent(chat))
     setIsUserInLocalStorage(isUserConsistent(sender));
     setIsChatInLocalStorage(isUserConsistent(sender) && isUserConsistent(receiver) && isChatConsistent(chat));
@@ -51,48 +56,48 @@ const App = () => {
   useEffect(() => {
     checkAndLoadLocalStorage();
     if (isUserInLocalStorage && isChatInLocalStorage) {
-      const receiver = JSON.parse(localStorage.getItem('receiver')!);
-      const sender = JSON.parse(localStorage.getItem('sender')!);
+      const receiver = JSON.parse(localStorage.getItem('receiver')!) as Receiver;
+      const sender = JSON.parse(localStorage.getItem('sender')!) as Sender;
       const {URL} = useWSContext();
-      try {
-        const result = fetch(`${URL}/chat/create`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-          method: 'POST',
-          body: JSON.stringify({sender, receiver})
-        });
-      } catch (error) {
-        console.log("error");
-      }
+      const {username, id} = sender;
+      authReq({
+        username,
+        id
+      }, webSocket).then(r => console.log('authReq successful')).catch(err => console.log(err));
+      createChatReq({
+        sender,
+        receiver
+      }, URL).then(r => console.log('created a chat!')).catch((e) => console.error(e));
     }
   }, []);
 
   return (
     <div className="app" css={styles}>
-      {isUserInLocalStorage
-        ? (
-          <>
-            {isChatInLocalStorage ?
-              <div className="messageBox">
-                <MessageBox/>
-              </div> :
-              <div className="chatCreation">
-                <ChatCreationForm
-                  setIsMessageFormVisible={setIsChatInLocalStorage}/>
-              </div>
-            }
-          </>)
-        :
-        <div className="authForm">
-          <AuthForm setIsUserInLocalStorage={setIsUserInLocalStorage}/>
-        </div>
-      }
-      <button onClick={e => localStorage.clear()}>
-        Clear LocalStorage
-      </button>
+      <AppRouter />
     </div>
-  )
+)
 }
 export default App
+
+// {
+//   isUserInLocalStorage
+//         ? (
+//           <>
+//             {isChatInLocalStorage ?
+//               <div className="messageBox">
+//                 <MessageBox/>
+//               </div> :
+//               <div className="chatCreation">
+//                 <ChatCreationForm
+//                   setIsMessageFormVisible={setIsChatInLocalStorage}/>
+//               </div>
+//             }
+//           </>)
+//         :
+//         <div className="authForm">
+//           <AuthForm setIsUserInLocalStorage={setIsUserInLocalStorage}/>
+//         </div>
+//       }
+//       <button onClick={e => localStorage.clear()}>
+//         Clear LocalStorage
+//       </button>

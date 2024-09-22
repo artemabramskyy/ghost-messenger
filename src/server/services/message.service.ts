@@ -9,7 +9,7 @@ export const processMessage = (chat: Chat, CHATS_INSTANCES: ChatMap) => {
     if (foundChat) {
       return foundChat;
     }
-    throw new Error('There is no a chat');
+    throw new Error('Message.service/Process Message: There is no a chat');
   } catch (err) {
     throw err;
   }

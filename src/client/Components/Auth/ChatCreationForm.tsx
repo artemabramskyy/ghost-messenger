@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react'
 import ChatCreationData from "root/src/interfaces/ChatCreationData";
-import User from "root/src/interfaces/User";
 import {useWSContext} from "root/src/client/Context/Context";
 import StoredChat from "root/src/interfaces/StoredChat";
+import {createChatReq} from "root/src/client/Api";
+import {importPublicKey} from "root/src/client/Encryption";
 
 interface ChatCreationFormProps {
   setIsMessageFormVisible: (arg: boolean) => void;
@@ -17,12 +18,11 @@ const ChatCreationForm = ({setIsMessageFormVisible}: ChatCreationFormProps) => {
   );
 
   const saveToLocalStorage = () => {
-    const sender: User = formData.sender;
-    const receiver: User = formData.receiver;
+    const {sender, receiver} = formData;
     const chat: StoredChat = {
       storedMessages: [],
       sender,
-      receiver,
+      receiver
     };
     localStorage.setItem('sender', JSON.stringify(sender));
     localStorage.setItem('receiver', JSON.stringify(receiver));
@@ -43,61 +43,34 @@ const ChatCreationForm = ({setIsMessageFormVisible}: ChatCreationFormProps) => {
 
   const createChat = async (e: React.MouseEvent) => {
     e.preventDefault();
-    formData.sender = JSON.parse(localStorage.getItem("sender")!);
+    const sender = JSON.parse(localStorage.getItem('sender')!);
+    if(sender === null) {
+      console.log("Cannot create chat, because sender is null");
+      return;
+    }
+    const {username, id} = sender;
+    formData.sender = {username, id};
+    // checking whether only first and second fields are empty
     const hasEmptyField = Object.values(formData.sender).concat(Object.values(formData.receiver)).some(value => value === '');
     if (hasEmptyField) {
       alert("You cannot create a chat with some of the fields empty!");
       return;
     }
-    try {
-      const result = await fetch(`${URL}/chat/create`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        method: 'POST',
-        body: JSON.stringify({...formData})
-      });
-      saveToLocalStorage();
-      setIsMessageFormVisible(true);
-      if(webSocket) {
-        webSocket.send(JSON.stringify({
-          type: 'chatExistenceRequest',
-          ...formData
-        }));
-      }
-    } catch (e) {
-      console.log(e)
-    }
-  }
 
-  useEffect(() => {
+    await createChatReq(formData, URL);
+
     if (webSocket) {
-      webSocket.onmessage = (event) => {
-        try {
-          const message = JSON.parse(event.data);
-          if (message.type === 'chatExistenceResponse') {
-            formData.receiver = message.sender;
-            formData.sender = message.receiver;
-            saveToLocalStorage();
-            setIsMessageFormVisible(true);
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      }
+      webSocket.send(JSON.stringify({
+        type: 'chatExistenceRequest',
+        ...formData
+      }));
     }
-  }, []);
+    setIsMessageFormVisible(true);
+  }
 
   return (
     <form>
       <h3>Write yours and your friend`s login</h3>
-      {/*<input value={formData.sender.username}*/}
-      {/*       name="sender.username"*/}
-      {/*       placeholder="your username" onChange={handleChange}></input>*/}
-      {/*<input value={formData.sender.id} placeholder="your id"*/}
-      {/*       name="sender.id"*/}
-      {/*       onChange={handleChange}></input>*/}
       <input value={formData.receiver.username}
              placeholder="yours friend username"
              name="receiver.username"

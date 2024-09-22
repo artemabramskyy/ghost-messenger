@@ -9,7 +9,6 @@ export const create = async (
 ) => {
   try {
     const {sender, receiver} = req.body;
-
     res.json(createChat({sender, receiver}, res));
   } catch (error) {
     next(error);

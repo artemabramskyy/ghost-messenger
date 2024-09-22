@@ -18,5 +18,16 @@ describe('WS', () => {
       console.log('Connection opened');
     });
   });
+
+  it('WS should receive a message', () => {
+    const client = new WebSocket("ws://localhost:4000");
+
+    client.on('open', ()=> {
+      console.log('Connection opened');
+    })
+    client.on('message', (event) => {
+      console.log("Received some data")
+    })
+  });
 });
 

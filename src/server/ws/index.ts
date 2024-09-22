@@ -17,8 +17,13 @@ export function initOnActions(
 
     if (data.type === 'auth') {
       const {user} = data;
-      const {id} = user;
-      CLIENTS.set(id, {id, ws});
+      const {id, exportedPublicKey} = user;
+
+      CLIENTS.set(id, {
+        id,
+        publicKey: exportedPublicKey,
+        ws
+      });
       ws.on('close', () => {
         console.log('Client disconnected', user);
         CLIENTS.delete(id);
@@ -35,14 +40,15 @@ export function initOnActions(
       }
     } else if (data.type === 'chatMessageRequest') {
       const {message, chat} = data;
+      const { receiver, sender} = chat;
       processMessage(chat, CHATS_INSTANCES);
-      const {receiver} = chat;
-      const client = CLIENTS.get(receiver.id);
-      if (client) {
+      const receiverClient = CLIENTS.get(receiver.id);
+      const senderClient = CLIENTS.get(sender.id);
+      if (receiverClient && senderClient) {
         console.log(`Send message: ${message}`);
         // rn I am not checking for the type
-        client.ws.send(JSON.stringify({
-          text: message,
+        receiverClient.ws.send(JSON.stringify({
+          encryptedData: message,
           type: 'chatMessageResponse'
         }));
       }

@@ -8,9 +8,12 @@ export const createChat = (chat: Omit<Chat, 'id'>, res: Response) => {
     const {sender, receiver} = chat;
     const CLIENTS = res.locals.CLIENTS;
     const receiverClient = findClient(receiver.id, CLIENTS);
-    if (receiverClient === null) {
+    const senderClient = findClient(sender.id, CLIENTS);
+
+    if (receiverClient === undefined || senderClient === undefined) {
       return {message: 'Receiver is not authorized yet'};
     }
+
     const id = generateChatId({sender, receiver});
     const CHATS_INSTANCES: ChatMap = res.locals.CHATS_INSTANCES;
     const duplicatedChat = findChat(id, CHATS_INSTANCES);
@@ -19,6 +22,12 @@ export const createChat = (chat: Omit<Chat, 'id'>, res: Response) => {
       const chat: Chat = {id, sender, receiver};
       CHATS_INSTANCES.set(id, chat);
       res.locals.CHATS_INSTANCES = CHATS_INSTANCES;
+
+      res.json(
+        {
+          receiverPublicKey: receiverClient.publicKey
+        }
+      );
 
       return {message: 'Created new chat'};
     }
