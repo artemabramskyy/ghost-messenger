@@ -1,8 +1,11 @@
 import React from 'react'
+import ChatCreationForm from "root/src/client/Components/Auth/ChatCreationForm";
 
 const CreateChat = () => {
   return (
-    <div>CreateChat</div>
+    <div>
+      <ChatCreationForm />
+    </div>
   )
 }
 export default CreateChat

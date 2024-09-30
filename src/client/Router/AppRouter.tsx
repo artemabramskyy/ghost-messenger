@@ -6,15 +6,24 @@ import Auth from "root/src/client/Pages/Auth";
 import Chat from "root/src/client/Pages/Chat";
 import CreateChat from "root/src/client/Pages/CreateChat";
 import Error from "root/src/client/Pages/Error";
+import AboutUser from "root/src/client/Pages/AboutUser";
+import Layout from "root/src/client/Components/Layout/Layout";
+
+export const routerPaths = {
+  home: '/',
+  auth: '/auth',
+  createChat: '/createChat',
+  chat: '/chat',
+  aboutUser: '/about-user'
+}
 
 const router = createBrowserRouter([{
-  path: '/',
-  // here should be some kind of layout element that will have navbar and a footer
-  element: <></>,
+  path: routerPaths.home,
+  element: <Layout/>,
   errorElement: <Error/>,
   children: [
     {
-      path: '/',
+      path: routerPaths.home,
       element: (
         <ProtectedRoute>
           <Home/>
@@ -22,13 +31,13 @@ const router = createBrowserRouter([{
       ),
     },
     {
-      path: '/auth',
+      path: routerPaths.auth,
       element: (
         <Auth/>
       )
     },
     {
-      path: '/create-chat',
+      path: routerPaths.createChat,
       element: (
         <ProtectedRoute>
           <CreateChat/>
@@ -36,10 +45,18 @@ const router = createBrowserRouter([{
       )
     },
     {
-      path: '/chat',
+      path: routerPaths.chat,
       element: (
         <ProtectedRoute>
           <Chat/>
+        </ProtectedRoute>
+      )
+    },
+    {
+      path: routerPaths.aboutUser,
+      element: (
+        <ProtectedRoute>
+          <AboutUser/>
         </ProtectedRoute>
       )
     }
@@ -47,7 +64,6 @@ const router = createBrowserRouter([{
 }]);
 
 const AppRouter: React.FC = () => {
-
   return (
     <RouterProvider router={router}/>
   )

@@ -3,13 +3,9 @@ import ChatCreationData from "root/src/interfaces/ChatCreationData";
 import {useWSContext} from "root/src/client/Context/Context";
 import StoredChat from "root/src/interfaces/StoredChat";
 import {createChatReq} from "root/src/client/Api";
-import {importPublicKey} from "root/src/client/Encryption";
+import {useNavigate} from "react-router-dom";
 
-interface ChatCreationFormProps {
-  setIsMessageFormVisible: (arg: boolean) => void;
-}
-
-const ChatCreationForm = ({setIsMessageFormVisible}: ChatCreationFormProps) => {
+const ChatCreationForm = () => {
   const {URL, webSocket} = useWSContext();
   const [formData, setFormData] = useState<ChatCreationData>({
       sender: {username: '', id: ''},
@@ -42,6 +38,7 @@ const ChatCreationForm = ({setIsMessageFormVisible}: ChatCreationFormProps) => {
   }
 
   const createChat = async (e: React.MouseEvent) => {
+    const navigate = useNavigate();
     e.preventDefault();
     const sender = JSON.parse(localStorage.getItem('sender')!);
     if(sender === null) {
@@ -65,7 +62,8 @@ const ChatCreationForm = ({setIsMessageFormVisible}: ChatCreationFormProps) => {
         ...formData
       }));
     }
-    setIsMessageFormVisible(true);
+    // redirect to chat
+    navigate('/chat');
   }
 
   return (

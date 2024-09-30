@@ -7,7 +7,7 @@ const root = createRoot(container);
 root.render(
   <TypeGuardProvider>
     <WSProvider>
-      <App/>
+      <App />
     </WSProvider>
   </TypeGuardProvider>
 );

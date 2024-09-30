@@ -1,8 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {css} from "@emotion/react";
-import ChatCreationForm from "root/src/client/Components/Auth/ChatCreationForm";
-import MessageBox from "root/src/client/Components/MessageUI/MessageBox";
-import AuthForm from "root/src/client/Components/Auth/AuthForm";
+import {css, Global} from "@emotion/react";
 import {
   useTypeGuardContext,
   useWSContext
@@ -13,30 +10,21 @@ import StoredChat from "root/src/interfaces/StoredChat";
 import AppRouter from "root/src/client/Router/AppRouter";
 
 const styles = css`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-
   h3 {
     background: red;
   }
 
-  form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    width: 30%;
-  }
-
-  .messageBox, .chatCreation, .authForm {
+  .messageBox, .chatCreation, .authForm, form {
     display: flex;
     flex-direction: column;
     justify-content: center;
     width: 100%;
   }
-`
 
-// TODO: add a possibility for sending messages from one account to another
+  form {
+    width: 30%;
+  }
+`
 
 const App = () => {
   const {isUserConsistent, isChatConsistent} = useTypeGuardContext();
@@ -48,7 +36,8 @@ const App = () => {
     const receiver = JSON.parse(localStorage.getItem('receiver')!) as Receiver;
     const sender = JSON.parse(localStorage.getItem('sender')!) as Sender;
     const chat = JSON.parse(localStorage.getItem('chat')!) as StoredChat;
-    console.log(isUserConsistent(sender), isChatConsistent(chat))
+    console.log(isUserConsistent(sender), isChatConsistent(chat));
+    // Remake this logic
     setIsUserInLocalStorage(isUserConsistent(sender));
     setIsChatInLocalStorage(isUserConsistent(sender) && isUserConsistent(receiver) && isChatConsistent(chat));
   }
@@ -72,32 +61,33 @@ const App = () => {
   }, []);
 
   return (
-    <div className="app" css={styles}>
+    <div css={styles}>
+      <Global styles={css`
+        html, body {
+          margin: 0;
+          padding: 0;
+          height: 100%;
+          box-sizing: border-box;
+        }
+
+        body, #app {
+          display: flex;
+          height: 100vh;
+          width: 100vw;
+        }
+
+        #app {
+          flex-direction: row;
+          justify-content: center;
+        }
+
+        body {
+          flex-direction: column;
+          justify-content: center;
+        }
+      `}/>
       <AppRouter />
     </div>
 )
 }
 export default App
-
-// {
-//   isUserInLocalStorage
-//         ? (
-//           <>
-//             {isChatInLocalStorage ?
-//               <div className="messageBox">
-//                 <MessageBox/>
-//               </div> :
-//               <div className="chatCreation">
-//                 <ChatCreationForm
-//                   setIsMessageFormVisible={setIsChatInLocalStorage}/>
-//               </div>
-//             }
-//           </>)
-//         :
-//         <div className="authForm">
-//           <AuthForm setIsUserInLocalStorage={setIsUserInLocalStorage}/>
-//         </div>
-//       }
-//       <button onClick={e => localStorage.clear()}>
-//         Clear LocalStorage
-//       </button>

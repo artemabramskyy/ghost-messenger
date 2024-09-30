@@ -3,15 +3,15 @@ import AuthData from "root/src/interfaces/AuthData";
 import {useWSContext} from "root/src/client/Context/Context";
 import {authReq} from "root/src/client/Api";
 
-interface AuthFormProps {
-  setIsUserInLocalStorage: (arg: boolean) => void;
-}
-
-const AuthForm = ({setIsUserInLocalStorage}: AuthFormProps) => {
+const AuthForm = () => {
   const {webSocket} = useWSContext();
   const [formData, setFormData] = useState<AuthData>(
     {username: "", id: ""}
   );
+
+  const setIsAuthorized = (value: boolean) => {
+    localStorage.setItem('isUserAuthorized ', JSON.stringify(value))
+  }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {value, name} = event.target;
@@ -33,7 +33,7 @@ const AuthForm = ({setIsUserInLocalStorage}: AuthFormProps) => {
     } catch (error) {
       console.error('Error calling authReq:', error);
     }
-    setIsUserInLocalStorage(true);
+    setIsAuthorized(true);
   }
 
   return (
